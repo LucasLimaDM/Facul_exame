@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Pesquisa de Instituições</title>
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-
+      /xUj+3OJ+FekeJzc5nTat/JFxhNeFN1Ep5Y5rIQdAlE="
+      crossorigin="anonymous"></script>
+</head>
+<body>
+    <h1>Pesquisa de Instituições</h1>
+    <form action="/resultados" method="post">
+        <label for="estado">Estado:</label>
+        <select name="estado" id="estado" required>
+            <option value="">Selecione um estado</option>
+            {% for estado in estados %}
+            <option value="{{ estado }}">{{ estado }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <label for="municipio">Município:</label>
+        <select name="municipio" id="municipio">
+            <option value="">Selecione um município</option>
+        </select>
+        <br><br>
+        <input type="submit" value="Pesquisar">
+    </form>
+
+    <script>
+        $(document).ready(function(){
+            $('#estado').change(function(){
+                var estadoSelecionado = $(this).val();
+                if(estadoSelecionado){
+                    $.ajax({
+                        url: '/get_municipios',
+                        type: 'POST',
+                        data: {'estado': estadoSelecionado},
+                        success: function(response){
+                            var municipioSelect = $('#municipio');
+                            municipioSelect.empty();
+                            municipioSelect.append('<option value="">Selecione um município</option>');
+                            $.each(response, function(index, municipio){
+                                municipioSelect.append('<option value="'+municipio+'">'+municipio+'</option>');
+                            });
+                        }
+                    });
+                }else{
+                    $('#municipio').empty();
+                    $('#municipio').append('<option value="">Selecione um município</option>');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
